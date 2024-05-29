@@ -1,20 +1,47 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Image } from 'react-native';
+import WelcomeScreen from './WelcomeScreen';
+import YoutubeScreen from './YoutubeScreen';
+import VimeoScreen from './VimeoScreen';
 
-export default function App() {
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function HomeTabs() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+          if (route.name === 'YouTube') {
+            iconName = require('./assets/youtube.png');
+          } else if (route.name === 'Vimeo') {
+            iconName = require('./assets/vimeo.png');
+          }
+          return <Image source={iconName} style={{ width: size, height: size, tintColor: color }} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: '#c4302b',
+        inactiveTintColor: 'gray',
+      }}
+    >
+      <Tab.Screen name="YouTube" component={YoutubeScreen} />
+      <Tab.Screen name="Vimeo" component={VimeoScreen} />
+    </Tab.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Home" component={HomeTabs} options={{ headerShown: false }}/>
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
